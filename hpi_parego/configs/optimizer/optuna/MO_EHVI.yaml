@@ -1,0 +1,16 @@
+# @package _global_
+defaults:
+  - base
+optimizer_id: Optuna-MO-EHVI
+optimizer:
+  optuna_cfg:
+    study:  
+      sampler:
+        _target_: optuna_integration.botorch.BoTorchSampler
+        candidates_func:
+          _target_: optuna_integration.botorch.ehvi_candidates_func
+          _partial_: true
+        seed: ${seed}
+
+  expects_multiple_objectives: true
+  expects_fidelities: false

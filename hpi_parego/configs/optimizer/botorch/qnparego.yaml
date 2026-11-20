@@ -1,0 +1,13 @@
+# @package _global_
+optimizer_id: qNParEGO
+optimizer_container_id: BoTorch
+optimizer:
+  _target_: hpi_parego.qnparego.QNParEGOOptimizer
+  _partial_: true
+  expects_multiple_objectives: true
+  hpi_method: no # 'no' (qNParEGO), 'hypershap' (HPI-qNParEGO) or 'random'
+  thresh: [0.0,0.8,0.8]
+  rnd_prob: 0.1
+  reweigh: 5 # new weights every 5 batches of q = 2 configurations, i.e., every 10 configurations
+  seed: ${seed}
+  q: 2

@@ -1,0 +1,33 @@
+# @package _global_
+optimizer_id: HPI-SOO
+optimizer_container_id: SMAC3
+optimizer:
+  smac_cfg:
+    scenario:
+        output_directory: ${outdir}
+        name: smac3output
+        use_default_config: true
+    smac_kwargs:
+      config_selector:
+        _target_: hpi_parego.my_config_selector.MyConfigSelector
+        _partial_: true
+        reweigh: 1 # single objective: no weights
+      acquisition_maximizer:
+        _target_: hpi_parego.my_random_search.MyRandomSearch
+        _partial_: true
+        path_to_run: ${optimizer.smac_cfg.scenario.output_directory}/${optimizer.smac_cfg.scenario.name}/${optimizer.smac_cfg.scenario.seed}
+        hpi_method: hypershap # method for selecting the hyperparameters ('hypershap', 'random', 'mcts_vs')
+        reduce_cs: incumbent #'default', 'random', 'incumbent'
+        thresh: [0.0,0.8,0.8]
+        n_trials: ${optimizer.smac_cfg.scenario.n_trials}   
+        rnd_prob: 0.1
+        hpi_surrogate: gp # model explained by HyperSHAP ('gp' or 'model', the random forest used for optimization)
+        interactions: false # true: order-2 interactions (k-SII) instead of Shapley values
+        ground_truth: false # true: ground-truth importance on the benchmark instead of a model (Appendix J)
+        objective_function: # only built if ground_truth is true
+          _target_: hpi_parego.hpi_utils.LazyObjective
+          _recursive_: false
+          cfg: ${task.objective_function}
+      acquisition_function:
+        _target_: hpi_parego.my_ei_hpi.MyEI
+      overwrite: true
